@@ -18,7 +18,15 @@ Screenshots show the signed-out web experience at a mobile viewport. Map data &c
 - Create an account, sign in, recover a password, and edit profile information.
 - Suggest facilities and track the status of your submissions.
 
-The map does not yet search by map bounds or show all facilities at once. Facility coverage depends on approved data in your Supabase project. Nearby search, directions, duplicate detection, and broader moderation workflows are still planned. The facility moderation queue is implemented but its migration and end-to-end authorization tests need validation in an isolated hosted development project before deployment.
+The map does not yet search by map bounds or show all facilities at once. Facility coverage depends on approved data in your Supabase project. Nearby search, directions, and broader moderation workflows are still planned. Moderation migrations need validation in an isolated hosted development project before deployment.
+
+### Facility moderation
+
+The proposed automatic review approves a suggestion only when its name, type, country, address, city, and coordinates match exactly one current trusted-place record, no existing facility is within 200 metres, and the submitter has made no more than five suggestions in the past hour. Coordinates must be within 75 metres of the trusted record. The published record uses trusted data, not unverified contact details. All other suggestions remain pending for human review; the hourly check limits automatic approvals, not submissions.
+
+Trusted-place records must be independently verified and populated by a database administrator from a source with suitable permission and attribution. They expire and are not writable or readable by app users. **No source is configured or imported automatically**, so auto-approval will not work until trusted records are provisioned. The checks cannot guarantee accuracy or eliminate abuse, and manual duplicate checks and corrections remain important. Decisions are recorded in a private audit table.
+
+Neither moderation migration has been deployed to the linked production database. Test both migrations and their SQL tests in a separate hosted development project before deployment. See [implementation progress](MILEBUD_PROGRESS.md) for the current status.
 
 ## Getting started
 

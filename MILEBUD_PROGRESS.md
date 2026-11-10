@@ -21,6 +21,7 @@
 - Added server-side facility name/location search, type filtering and 20-item pages, plus an approved-facility detail screen with listed amenities and active driver reports. Existing report submission and feedback remain available.
 - Added an interactive OpenStreetMap embed for web and native, with a selected facility pin from the current results page and a link to its details. Map use requires no API key or location permission.
 - Implemented a moderator review queue and an atomic database review function in a new, unapplied migration. Approval creates an approved facility; rejection does not. The function checks trusted moderator claims, rejects self-review and stale submissions, and records the reviewer.
+- Implemented an unapplied fail-closed automatic-review migration: only a unique, current trusted-place match within 75 m, with matching name/type/address/city/country, can be approved; existing facilities within 200 m and more than five submissions in an hour keep suggestions pending. Private audit records capture outcomes; trusted data must be provisioned by an administrator.
 - Added an SSR-safe auth storage adapter so the web route can render without accessing browser storage on the server.
 
 ## Current status
@@ -37,6 +38,7 @@
 - Facility moderation is not deployed: apply and test the new migration in a separate hosted development project first. Provision trusted moderators through the Supabase Auth administrative API or another secured administrative process by setting `app_metadata.is_moderator` to `true`; never use user-editable metadata. Moderators must refresh their session to receive updated claims, and revocation may not take effect until existing JWTs expire.
 - Role-based SQL tests cover owner/other-user, anonymous, and moderator behavior, but the transactional write tests have not been executed. Local Supabase testing is not part of the user's workflow; a hosted development project is needed for isolated write-capable verification.
 - The review queue excludes a moderator's own submissions and asks reviewers to check duplicates manually. It does not yet support rejection reasons, duplicate linking, or appeals. End-to-end hosted database verification and moderator provisioning remain outstanding.
+- Automated review has no configured trusted source or ingestion pipeline; it will leave every suggestion pending until an administrator supplies independently verified records. It does not eliminate abuse, enforce a submission rate limit, or replace human correction and moderation.
 - Supabase environment variables are configured locally; never print or commit their values.
 
 ## Architecture
@@ -56,7 +58,8 @@
 - After the UI redesign, `npx expo lint`, `npx tsc --noEmit` passed; browser checks (390px mobile and desktop widths, light and dark) confirmed Home (with mocked facility/report responses, no data written), Account, and Contribute render correctly. Native tab icons (SF Symbols/Material) are type-checked but not yet visually verified on a device.
 - Facility discovery/detail browser checks used non-persistent fixtures for pagination, navigation, amenities and reports; live reads showed the empty state. Fresh Expo server renders of Home and an invalid detail link in light and dark modes produced no hydration errors after clearing Metro's stale cache. Native navigation has not been device-tested.
 - OpenStreetMap embed, visible attribution, zoom controls, a selected pin, and location-error retry were verified in the browser with a non-persistent facility fixture. The live GeoJSON endpoint returned an empty feature collection; there are no approved facilities available to test a real marker. The Android JavaScript bundle builds; native WebView has not been device-tested.
-- Moderator queue, approval, rejection, cancellation, and anonymous visibility were browser-tested using mocked auth and API responses only. `supabase/tests/facility_submission_review.sql` contains transactional authorization and review tests, but has not been executed because an isolated hosted development database is not configured. The migration has not been applied.
+- Moderator queue, approval, rejection, cancellation, and anonymous visibility were browser-tested using mocked auth and API responses only. `supabase/tests/facility_submission_review.sql` has not been run against a hosted Supabase development database. The migration has not been applied.
+- All migrations and both moderation test files passed in an isolated in-memory PGlite/PostGIS/pgTAP harness with simulated Supabase auth: 14 manual-review assertions and 19 automatic-review assertions, including both distance thresholds. This is not a substitute for testing against a hosted Supabase development project, real auth, or concurrent sessions; migrations remain unapplied.
 - No local Supabase stack is used. Write-capable database tests have not been run; do not run fixtures against linked production. Use a separate hosted development project if database integration tests are needed.
 - Auth confirmation and recovery redirects use the configured app scheme; add the app callback and deployed web URL to Supabase Auth's allowed redirect URLs before testing those email flows. No Auth settings were changed.
 - 15 read-only production catalog/security assertions passed for the facility reports migration.
@@ -70,6 +73,7 @@
 - Resolve product decisions that affect MVP access/authentication, report policy, location handling, facility data provenance, and MVP reviews/saves.
 - Validate the authenticated report and facility-submission flows against a hosted development project, not production.
 - Run the moderation migration and SQL tests in an isolated hosted development project, provision test moderators securely, and verify approval/rejection end to end before deployment.
+- Select and license a trustworthy facility-data source, establish a secure verification/import and expiry process, and test automatic reviews in hosted development before enabling them.
 - Design bounded, stable PostGIS discovery before adding map-bounds/nearby search and directions; review tile capacity and provider alternatives before launch.
 - Add coordinate editing/place picking and deduplication to facility suggestions after choosing a place-search/map approach.
 - Replace remaining starter navigation/presentation components as the MVP information architecture is implemented.

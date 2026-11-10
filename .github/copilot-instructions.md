@@ -8,3 +8,4 @@
 - Prefer minimal, focused changes.
 - Follow `AGENTS.md` for Expo-specific requirements.
 - Verify changes with lint and TypeScript checks.
+- Create a separate Git branch for each feature; commit and push feature work on that branch rather than directly on main.
