@@ -4,20 +4,36 @@ import { Platform } from 'react-native';
 
 export const Colors = {
   light: {
-    text: '#000000',
-    background: '#ffffff',
-    backgroundElement: '#F0F0F3',
-    backgroundSelected: '#E0E1E6',
-    textSecondary: '#60646C',
-    primary: '#3c87f7',
+    text: '#14181F',
+    background: '#F4F5F7',
+    backgroundElement: '#FFFFFF',
+    backgroundSelected: '#E5E8EC',
+    textSecondary: '#5B6470',
+    primary: '#D97706',
+    onPrimary: '#1A1100',
+    primarySoft: '#FDF0DB',
+    success: '#15803D',
+    successSoft: '#DCF5E4',
+    warning: '#B45309',
+    warningSoft: '#FDEBCB',
+    danger: '#C62828',
+    dangerSoft: '#FBE1E1',
   },
   dark: {
-    text: '#ffffff',
-    background: '#000000',
-    backgroundElement: '#212225',
-    backgroundSelected: '#2E3135',
-    textSecondary: '#B0B4BA',
-    primary: '#69a7ff',
+    text: '#F3F5F8',
+    background: '#0B0D10',
+    backgroundElement: '#151920',
+    backgroundSelected: '#262C35',
+    textSecondary: '#9BA5B2',
+    primary: '#FBBF24',
+    onPrimary: '#1A1100',
+    primarySoft: '#2C2410',
+    success: '#4ADE80',
+    successSoft: '#12301D',
+    warning: '#FBBF24',
+    warningSoft: '#33290F',
+    danger: '#F87171',
+    dangerSoft: '#3A1818',
   },
 } as const;
 
@@ -94,11 +110,11 @@ export const BorderRadius = {
 
 export const Shadows = {
   card: {
-    shadowColor: '#000000',
+    shadowColor: '#0B1220',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 2,
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
+    elevation: 1,
   },
 } as const;
 

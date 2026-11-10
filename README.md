@@ -1,56 +1,68 @@
-# Welcome to your Expo app 👋
+# Milebud
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Milebud is a work-in-progress mobile app for professional truck drivers to discover facilities and share timely updates about conditions on the road. It is built with Expo, React Native, TypeScript, and Supabase, with a web version for development and testing.
 
-## Get started
+## Screenshots
 
-1. Install dependencies
+| Discover | Account |
+| :---: | :---: |
+| ![Home screen with facility filters and map](assets/screenshots/home.png) | ![Account sign-in screen](assets/screenshots/account.png) |
 
-   ```bash
-   npm install
-   ```
+Screenshots show the signed-out web experience at a mobile viewport. Map data &copy; [OpenStreetMap contributors](https://www.openstreetmap.org/copyright).
 
-2. Start the app
+## What is available
 
-   ```bash
-   npx expo start
-   ```
+- Search and filter approved facilities, browse pages of results, and view facility details and listed amenities.
+- Explore an OpenStreetMap map and show the location of a selected facility from the current results page.
+- Read expiring driver reports and, when signed in, share updates or confirm and dispute reports.
+- Create an account, sign in, recover a password, and edit profile information.
+- Suggest facilities and track the status of your submissions.
 
-In the output, you'll find options to open the app in a
+The map does not yet search by map bounds or show all facilities at once. Facility coverage depends on approved data in your Supabase project. Nearby search, directions, duplicate detection, and broader moderation workflows are still planned. The facility moderation queue is implemented but its migration and end-to-end authorization tests need validation in an isolated hosted development project before deployment.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Getting started
 
-You can start developing by editing the files inside the **src/app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+### Prerequisites
 
-## Get a fresh project
+- Node.js and npm.
+- A Supabase project with the required schema and authentication configured.
+- Expo Go, a development build, or a browser to run the app.
 
-When you're ready, run:
+### Install and configure
 
-```bash
-npm run reset-project
+```sh
+npm install
 ```
 
-This command will move the starter code to the **example** directory and create a blank **src/app** directory where you can start developing.
+Copy `.env.example` to `.env` and set `EXPO_PUBLIC_SUPABASE_URL` and `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY` to your project's public URL and publishable key. These variables are bundled into the client and are **not secrets**. Never put a service-role or secret key in them. `.env` is ignored by Git.
 
-### Other setup steps
+The database schema is defined in [`supabase/migrations`](supabase/migrations). Apply and test migrations against a separate hosted development project before deploying them to production; this project does not require local Docker. Email confirmation and password recovery also require the app callback and deployed web URL to be allowed in Supabase Auth's redirect settings.
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+### Run
 
-## Learn more
+```sh
+npx expo start
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+Use the Expo CLI to open the app in Expo Go, a development build, or a browser. To start directly on the web:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```sh
+npm run web
+```
 
-## Join the community
+### Checks
 
-Join our community of developers creating universal apps.
+```sh
+npx expo lint
+npx tsc --noEmit
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Database security tests live in [`supabase/tests`](supabase/tests). Tests that create or modify records must run only against an isolated hosted development database, never the production project.
+
+## Project documentation
+
+- [Product specification](MILEBUD_PRODUCT_SPEC.md)
+- [Roadmap](MILEBUD_ROADMAP.md)
+- [Implementation progress and verification](MILEBUD_PROGRESS.md)
+
+The map uses OpenStreetMap's embedded service. Requests and selected public facility coordinates are sent to OpenStreetMap; its donated tile service has [usage limits and no availability guarantee](https://operations.osmfoundation.org/policies/tiles/).
